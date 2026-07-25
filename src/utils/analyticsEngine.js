@@ -10,22 +10,25 @@
  * Computes step-by-step conversion funnel (Views -> Contact Unlocks -> Visit Requests -> Leases Signed)
  */
 export const calculateConversionFunnel = (properties = [], events = []) => {
-  const totalViews = properties.reduce((acc, p) => acc + (p.views || 0), 0) + 120 // base simulation fallback
-  const totalUnlocks = Math.round(totalViews * 0.18) + (events.filter(e => e.event_type === 'unlock').length)
-  const totalVisits = Math.round(totalUnlocks * 0.42) + (events.filter(e => e.event_type === 'visit_request').length)
-  const totalLeases = Math.round(totalVisits * 0.35) + (events.filter(e => e.event_type === 'lease_signed').length)
+  const realViews = properties.reduce((acc, p) => acc + (p.views || 0), 0)
+  const viewEventsCount = events.filter(e => e.event_type === 'view').length
+  const totalViews = Math.max(realViews, viewEventsCount)
 
-  const unlockRate = totalViews > 0 ? ((totalUnlocks / totalViews) * 100).toFixed(1) : 0
-  const visitRate = totalUnlocks > 0 ? ((totalVisits / totalUnlocks) * 100).toFixed(1) : 0
-  const leaseRate = totalVisits > 0 ? ((totalLeases / totalVisits) * 100).toFixed(1) : 0
-  const overallConversion = totalViews > 0 ? ((totalLeases / totalViews) * 100).toFixed(1) : 0
+  const totalUnlocks = events.filter(e => e.event_type === 'unlock').length
+  const totalVisits = events.filter(e => e.event_type === 'visit_request').length
+  const totalLeases = events.filter(e => e.event_type === 'lease_signed').length
+
+  const unlockRate = totalViews > 0 ? ((totalUnlocks / totalViews) * 100).toFixed(1) : '0.0'
+  const visitRate = totalUnlocks > 0 ? ((totalVisits / totalUnlocks) * 100).toFixed(1) : '0.0'
+  const leaseRate = totalVisits > 0 ? ((totalLeases / totalVisits) * 100).toFixed(1) : '0.0'
+  const overallConversion = totalViews > 0 ? ((totalLeases / totalViews) * 100).toFixed(1) : '0.0'
 
   return {
     steps: [
       { name: 'Property Views', count: totalViews, conversion: 100, dropoff: 0, color: 'bg-blue-500' },
-      { name: 'Contact Unlocks', count: totalUnlocks, conversion: Number(unlockRate), dropoff: (100 - Number(unlockRate)).toFixed(1), color: 'bg-indigo-500' },
-      { name: 'Visit Requests', count: totalVisits, conversion: Number(visitRate), dropoff: (100 - Number(visitRate)).toFixed(1), color: 'bg-purple-500' },
-      { name: 'Leases Signed', count: totalLeases, conversion: Number(leaseRate), dropoff: (100 - Number(leaseRate)).toFixed(1), color: 'bg-emerald-500' }
+      { name: 'Contact Unlocks', count: totalUnlocks, conversion: Number(unlockRate), dropoff: Math.max(0, (100 - Number(unlockRate))).toFixed(1), color: 'bg-indigo-500' },
+      { name: 'Visit Requests', count: totalVisits, conversion: Number(visitRate), dropoff: Math.max(0, (100 - Number(visitRate))).toFixed(1), color: 'bg-purple-500' },
+      { name: 'Leases Signed', count: totalLeases, conversion: Number(leaseRate), dropoff: Math.max(0, (100 - Number(leaseRate))).toFixed(1), color: 'bg-emerald-500' }
     ],
     overallConversion: Number(overallConversion)
   }

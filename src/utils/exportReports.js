@@ -47,18 +47,25 @@ export const exportPDFReport = (reportTitle = 'GoEazy Analytics Report') => {
  * Helper to export Landlord Performance Report to CSV
  */
 export const exportLandlordCSV = (properties = [], funnelData = {}) => {
+  const parsePrice = (priceVal) => {
+    if (!priceVal) return 0
+    if (typeof priceVal === 'number') return priceVal
+    const cleanStr = String(priceVal).replace(/[^0-9.]/g, '')
+    return Number(cleanStr) || 0
+  }
+
   const rows = properties.map(p => ({
     'Property ID': p.id,
     'Title': p.title,
     'Type': p.type,
     'City': p.city,
     'Area': p.area,
-    'Rent (INR)': p.price,
+    'Rent (INR)': parsePrice(p.price),
     'Views': p.views || 0,
     'Est. Unlocks': Math.round((p.views || 0) * 0.18),
     'Est. Site Visits': Math.round((p.views || 0) * 0.08),
     'Status': p.availability ? 'Available' : 'Rented',
-    'Created Date': new Date(p.created_at).toLocaleDateString('en-IN')
+    'Created Date': p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN') : '-'
   }))
 
   // Add overall summary row
@@ -68,7 +75,7 @@ export const exportLandlordCSV = (properties = [], funnelData = {}) => {
     'Type': `${properties.length} Properties`,
     'City': 'Uttarakhand',
     'Area': '-',
-    'Rent (INR)': properties.reduce((a, b) => a + Number(b.price || 0), 0),
+    'Rent (INR)': properties.reduce((a, b) => a + parsePrice(b.price), 0),
     'Views': properties.reduce((a, b) => a + Number(b.views || 0), 0),
     'Est. Unlocks': funnelData.steps?.[1]?.count || 0,
     'Est. Site Visits': funnelData.steps?.[2]?.count || 0,
