@@ -182,12 +182,16 @@ export const PropertyDetail = () => {
     }
     setBookingVisit(true)
     try {
+      // Normalize visitDate to YYYY-MM-DD in local timezone to prevent UTC date drift
+      const targetDate = visitDate.includes('T') ? visitDate.split('T')[0] : visitDate
+      const normalizedDate = new Date(`${targetDate}T00:00:00`).toLocaleDateString('en-CA')
+
       const { data: existingVisit } = await supabase
         .from('site_visits')
         .select('id')
         .eq('property_id', p.id)
         .eq('user_id', user.id)
-        .eq('visit_date', visitDate)
+        .eq('visit_date', normalizedDate)
         .maybeSingle()
 
       if (existingVisit) {
@@ -200,7 +204,7 @@ export const PropertyDetail = () => {
         property_id: p.id,
         user_id: user.id,
         landlord_id: p.landlord_id,
-        visit_date: visitDate,
+        visit_date: normalizedDate,
         status: 'pending'
       })
       if (error) throw error
