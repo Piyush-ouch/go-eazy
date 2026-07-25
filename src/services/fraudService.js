@@ -32,7 +32,10 @@ export const verifyPhoneOtpService = async (userId, phoneNumber, inputOtp) => {
     throw new Error('OTP has expired. Please request a new code.')
   }
 
-  if (inputOtp !== code && inputOtp !== '123456') { // Allow 123456 for demo
+  const isDevMode = Boolean(import.meta.env?.DEV || import.meta.env?.MODE === 'development')
+  const isValidOtp = inputOtp === code || (isDevMode && inputOtp === '123456')
+
+  if (!isValidOtp) {
     throw new Error('Invalid OTP code. Please try again.')
   }
 
@@ -79,9 +82,9 @@ export const submitIdVerificationService = async (userId, { idType, idNumber, do
     .update({
       id_type: idType,
       id_number_masked: validationResult.masked,
-      id_verification_status: 'verified', // Auto-verify on valid checksum
-      id_verified_at: now,
-      bio: documentUrl ? `Verified with ${idType.toUpperCase()} document (${documentUrl.split('/').pop()})` : undefined
+      id_verification_status: 'pending', // Submitted for admin verification
+      id_submitted_at: now,
+      bio: documentUrl ? `Submitted ${idType.toUpperCase()} document (${documentUrl.split('/').pop()}) for verification` : undefined
     })
     .eq('id', userId)
     .select()

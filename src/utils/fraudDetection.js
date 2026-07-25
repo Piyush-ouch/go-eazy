@@ -158,14 +158,26 @@ export const detectListingSpam = (newProperty, existingListings = []) => {
 
 // ── 3. PHOTO AUTHENTICITY & PERCEPTUAL IMAGE HASHING ──────────────────────────
 /**
- * Generates a simple perceptual hash string for an image URL or File string.
+ * Generates a normalized perceptual hash string for an image URL or File path string.
+ * Strips URL schemes, tokens, query params, and domains to focus on core filename signature.
  */
 export const computeImageHash = (str) => {
   if (!str) return '0000000000000000'
+  
+  // Normalize string: strip query params, tokens, domain protocol
+  let normalized = String(str).split('?')[0].split('#')[0]
+  const lastSlashIndex = normalized.lastIndexOf('/')
+  if (lastSlashIndex !== -1) {
+    normalized = normalized.slice(lastSlashIndex + 1)
+  }
+  normalized = normalized.toLowerCase().trim()
+
+  if (!normalized) return '0000000000000000'
+
   let hash1 = 5381
   let hash2 = 0x84222325
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
+  for (let i = 0; i < normalized.length; i++) {
+    const char = normalized.charCodeAt(i)
     hash1 = (hash1 * 33) ^ char
     hash2 = (hash2 * 31) ^ char
   }
