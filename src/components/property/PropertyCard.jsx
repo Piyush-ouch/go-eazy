@@ -148,12 +148,12 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false, con
   return (
     <div
       className={cn(
-        'group bg-white rounded-2xl border border-gray-100 shadow-md',
+        'group bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-md',
         'hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 cursor-pointer flex flex-col overflow-hidden'
       )}
       onClick={() => navigate(`/property/${property.id}`)}
     >
-      <div className="relative w-full aspect-[4/3] bg-gray-50 overflow-hidden rounded-b-2xl shadow-sm">
+      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-slate-800 overflow-hidden rounded-b-2xl shadow-sm">
         <img
           src={mainImage}
           alt={property.title}
@@ -164,7 +164,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false, con
           onLoad={() => setImgLoaded(true)}
           loading="lazy"
         />
-        {!imgLoaded && <div className="skeleton absolute inset-0" />}
+        {!imgLoaded && <div className="skeleton absolute inset-0 bg-slate-200 dark:bg-slate-700" />}
         {badge ? (
           <div className="absolute bottom-2 left-2 z-20">{badge}</div>
         ) : (
@@ -177,7 +177,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false, con
             onClick={handleCompareToggle}
             className={cn(
               'h-8 px-2 rounded-full flex items-center gap-1 text-[10px] font-black transition-all shadow-sm cursor-pointer',
-              compared ? 'bg-[#CA3433] text-white' : 'bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white'
+              compared ? 'bg-[#CA3433] text-white' : 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-gray-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-900'
             )}
             title={compared ? 'Remove from Compare' : 'Add to Compare'}
           >
@@ -189,7 +189,7 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false, con
             onClick={handleFav}
             className={cn(
               'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm cursor-pointer',
-              isFav ? 'bg-brand-500 text-white' : 'bg-white/90 backdrop-blur-sm text-gray-600 hover:bg-white'
+              isFav ? 'bg-brand-500 text-white' : 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-gray-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-900'
             )}
             title="Save Property"
           >
@@ -201,42 +201,44 @@ const PropertyCardComponent = ({ property, layout = 'grid', compact = false, con
       <div className="px-3 py-2 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-0.5">
           <span className={cn(
-            "font-black text-gray-400 uppercase tracking-widest",
+            "font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest",
             condensed ? "text-[8px]" : "text-[9px]"
           )}>
             {t(`property.types.${property.type}`) || property.type}
           </span>
-          <div className="flex items-center gap-1 bg-gray-50/50 px-1 py-0.5 rounded-lg">
-            <span className={cn("font-black text-gray-900", condensed ? "text-[8px]" : "text-[9px]")}>{rating}</span>
-            <Star size={condensed ? 8 : 9} className="text-orange-400" fill="currentColor" />
+          <div className="flex items-center gap-1 bg-gray-50/50 dark:bg-slate-800/50 px-1 py-0.5 rounded-lg">
+            <span className={cn("font-black text-gray-900 dark:text-slate-200", condensed ? "text-[8px]" : "text-[9px]")}>{rating}</span>
+            <Star size={condensed ? 7 : 9} fill="currentColor" className="text-orange-400" />
           </div>
         </div>
         
         <h3 className={cn(
-          "font-extrabold text-gray-900 leading-tight line-clamp-1 mb-0.5",
-          condensed ? "text-[11px]" : "text-sm"
+          "font-black text-gray-900 dark:text-white leading-tight line-clamp-1 mb-1 group-hover:text-[#CA3433] transition-colors",
+          condensed ? "text-xs" : "text-sm sm:text-base"
         )}>
           {property.title}
         </h3>
         
         
-        <div className="mt-auto pt-1.5 border-t border-gray-50 flex items-center justify-between">
-          <p className="flex flex-col">
-            <span className="text-[8px] font-bold text-gray-400 uppercase leading-none">{t('property.labels.from')}</span>
+        <div className="flex items-end justify-between mt-auto pt-1 border-t border-gray-100/50 dark:border-slate-800">
+          <div className="flex flex-col">
+            <span className="text-[8px] font-bold text-gray-400 dark:text-slate-500 uppercase leading-none mb-0.5">{t('property.labels.from')}</span>
             <span className={cn(
-              "font-black text-gray-900 leading-tight",
+              "font-black text-gray-900 dark:text-white leading-none",
               condensed ? "text-sm" : "text-base"
-            )}>₹{formatPrice(property.price)}</span>
-          </p>
-          <button className="text-[#CA3433] hover:text-brand-800 transition-colors">
-            <Eye size={condensed ? 14 : 18} />
-          </button>
+            )}>
+              ₹{formatPrice(property.price)}
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-1 text-gray-400 dark:text-slate-500 text-[10px]">
+            <Eye size={11} />
+            <span className="font-semibold">{property.views || 0}</span>
+          </div>
         </div>
       </div>
     </div>
   )
 }
-
-
 
 export const PropertyCard = memo(PropertyCardComponent)

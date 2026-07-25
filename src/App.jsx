@@ -1,7 +1,7 @@
-// GoEazy App - Vercel Build Refresh
 import React, { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
+import { ThemeProvider } from './context/ThemeContext'
 import { Home } from './pages/Home'
 import { Search } from './pages/Search'
 import { NotFound } from './pages/NotFound'
@@ -14,9 +14,6 @@ import { useSelector } from 'react-redux'
 import { useAuth } from './hooks/useAuth'
 import ScrollToTop from './components/common/ScrollToTop'
 
-// Heavy pages: lazy-loaded into separate chunks to prevent
-// "Cannot access X before initialization" TDZ errors from
-// Rolldown bundling all module graphs together.
 const PropertyDetail          = lazy(() => import('./pages/PropertyDetail').then(m => ({ default: m.PropertyDetail })))
 const UserDashboard           = lazy(() => import('./pages/UserDashboard').then(m => ({ default: m.UserDashboard })))
 const SavedProperties         = lazy(() => import('./pages/SavedProperties').then(m => ({ default: m.SavedProperties })))
@@ -37,130 +34,155 @@ const Messages                = lazy(() => import('./pages/Messages').then(m => 
 const NotificationHistory     = lazy(() => import('./pages/NotificationHistory').then(m => ({ default: m.NotificationHistory })))
 const LeaseDetail             = lazy(() => import('./pages/LeaseDetail').then(m => ({ default: m.LeaseDetail })))
 const ComparePage             = lazy(() => import('./pages/ComparePage').then(m => ({ default: m.ComparePage })))
-
+const AuthHome                = lazy(() => import('./pages/AuthHome').then(m => ({ default: m.AuthHome })))
 
 const PageSpinner = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+  <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
     <div className="w-10 h-10 border-4 border-[#CA3433] border-t-transparent rounded-full animate-spin" />
   </div>
 )
 
-function App() {
+export function App() {
   useAuth() 
   const { loading } = useSelector(s => s.auth)
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
         <div className="w-12 h-12 border-4 border-[#CA3433] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <AppInitializer />
-      <OnboardingQuiz />
-      <RoleSelectionModal />
-      <Layout>
-        <Suspense fallback={<PageSpinner />}>
-          <Routes>
-          <Route path="/" element={<Navigate to="/search" replace />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/property/:id" element={<PropertyDetail />} />
-          
-          {/* Legal Routes */}
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfService />} />
-          <Route path="/cookies" element={<CookiePolicy />} />
-          <Route path="/refund" element={<RefundPolicy />} />
-          <Route path="/about" element={<About />} />
+    <ThemeProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <AppInitializer />
+        <OnboardingQuiz />
+        <RoleSelectionModal />
+        <Layout>
+          <Suspense fallback={<PageSpinner />}>
+            <Routes>
+              <Route path="/" element={<Navigate to="/search" replace />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/property/:id" element={<PropertyDetail />} />
+              <Route path="/properties/:id" element={<PropertyDetail />} />
+              <Route path="/services" element={<NearbyServices />} />
+              <Route path="/services/:id" element={<ServiceDetail />} />
+              <Route path="/login" element={<AuthHome />} />
+              <Route path="/signup" element={<AuthHome />} />
+              
+              {/* Legal Routes */}
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/cookies" element={<CookiePolicy />} />
+              <Route path="/refund" element={<RefundPolicy />} />
+              <Route path="/about" element={<About />} />
 
-          {/* Admin Route */}
-          <Route path="/systemadmin" element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <SystemAdmin />
-            </ProtectedRoute>
-          } />
+              {/* Admin Route */}
+              <Route path="/admin" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <SystemAdmin />
+                </ProtectedRoute>
+              } />
+              <Route path="/systemadmin" element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <SystemAdmin />
+                </ProtectedRoute>
+              } />
 
-          {/* Nearby Services Routes */}
-          <Route path="/nearby" element={<NearbyServices />} />
-          <Route path="/services/:id" element={<ServiceDetail />} />
-          <Route path="/compare" element={<ComparePage />} />
+              {/* Nearby Services Routes */}
+              <Route path="/nearby" element={<NearbyServices />} />
+              <Route path="/compare" element={<ComparePage />} />
 
-          {/* Service Provider Routes */}
-          <Route path="/service-provider" element={
-            <ProtectedRoute allowedRoles={['service_provider']}>
-              <ServiceProviderDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/service-provider/new" element={
-            <ProtectedRoute allowedRoles={['service_provider']}>
-              <ServiceNew />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/dashboard" element={
-            <ProtectedRoute allowedRoles={['user', 'landlord', 'service_provider']}>
-              <UserDashboard />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/messages" element={
-            <ProtectedRoute allowedRoles={['user', 'landlord', 'service_provider']}>
-              <Messages />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/notifications" element={
-            <ProtectedRoute>
-              <NotificationHistory />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/agreements/:id" element={
-            <ProtectedRoute>
-              <LeaseDetail />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/dashboard/saved" element={
-            <ProtectedRoute>
-              <SavedProperties />
-            </ProtectedRoute>
-          } />
-          
-          <Route path="/settings" element={
-            <ProtectedRoute>
-              <Settings />
-            </ProtectedRoute>
-          } />
-          
-          {/* Landlord Routes */}
-          <Route path="/landlord" element={
-            <ProtectedRoute allowedRoles={['landlord']}>
-              <LandlordDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/landlord/properties/new" element={
-            <ProtectedRoute allowedRoles={['landlord']}>
-              <PropertyNew />
-            </ProtectedRoute>
-          } />
-          <Route path="/landlord/properties/:id/edit" element={
-            <ProtectedRoute allowedRoles={['landlord']}>
-              <PropertyEdit />
-            </ProtectedRoute>
-          } />
+              {/* Service Provider Routes */}
+              <Route path="/provider" element={
+                <ProtectedRoute allowedRoles={['service_provider']}>
+                  <ServiceProviderDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/service-provider" element={
+                <ProtectedRoute allowedRoles={['service_provider']}>
+                  <ServiceProviderDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/service-provider/new" element={
+                <ProtectedRoute allowedRoles={['service_provider']}>
+                  <ServiceNew />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/messages" element={
+                <ProtectedRoute>
+                  <Messages />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/notifications" element={
+                <ProtectedRoute>
+                  <NotificationHistory />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/leases/:id" element={
+                <ProtectedRoute>
+                  <LeaseDetail />
+                </ProtectedRoute>
+              } />
+              <Route path="/agreements/:id" element={
+                <ProtectedRoute>
+                  <LeaseDetail />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/saved" element={
+                <ProtectedRoute>
+                  <SavedProperties />
+                </ProtectedRoute>
+              } />
+              <Route path="/dashboard/saved" element={
+                <ProtectedRoute>
+                  <SavedProperties />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              } />
+              
+              {/* Landlord Routes */}
+              <Route path="/landlord" element={
+                <ProtectedRoute allowedRoles={['landlord']}>
+                  <LandlordDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/landlord/properties/new" element={
+                <ProtectedRoute allowedRoles={['landlord']}>
+                  <PropertyNew />
+                </ProtectedRoute>
+              } />
+              <Route path="/landlord/properties/:id/edit" element={
+                <ProtectedRoute allowedRoles={['landlord']}>
+                  <PropertyEdit />
+                </ProtectedRoute>
+              } />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        </Suspense>
-      </Layout>
-    </BrowserRouter>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </Layout>
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }
-
 
 export default App

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Search, ChevronDown, User, LogOut, Home, Building, Tent, MapPin, Grid, PlusCircle, LayoutDashboard, Menu, X, MessageSquare, Bell, Sparkles, Layers } from 'lucide-react'
+import { Search, ChevronDown, User, LogOut, Home, Building, Tent, MapPin, Grid, PlusCircle, LayoutDashboard, Menu, X, MessageSquare, Bell, Sparkles, Layers, Sun, Moon } from 'lucide-react'
+import { useTheme } from '../../context/ThemeContext'
 import { openAuthModal } from '../../store/authSlice'
 import { toggleMobileMenu, closeMobileMenu } from '../../store/uiSlice'
 import { useAuth } from '../../hooks/useAuth'
@@ -24,6 +25,7 @@ export const Navbar = () => {
   const { filters, updateFilters, resetFilters } = useProperties()
   const { unreadCount } = useNotifications()
   const { comparedIds } = useCompare()
+  const { isDark, toggleTheme } = useTheme()
   const { mobileMenuOpen } = useSelector(s => s.ui)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [cityMenuOpen, setCityMenuOpen] = useState(false)
@@ -172,6 +174,14 @@ export const Navbar = () => {
                 <img src="/INR.webp" alt="INR" className="w-full h-full object-cover" />
               </div>
               INR <ChevronDown size={14} />
+            </button>
+
+            <button
+              onClick={toggleTheme}
+              className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 flex items-center justify-center text-gray-600 dark:text-slate-300 hover:text-[#CA3433] dark:hover:text-[#CA3433] border border-gray-200 dark:border-slate-700 transition-all duration-200 cursor-pointer shadow-sm active:scale-95"
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDark ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-slate-700" />}
             </button>
 
             {loading ? (

@@ -33,7 +33,7 @@ export const Layout = ({ children }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className={location.pathname === '/systemadmin' ? "" : "min-h-screen"}
+          className={location.pathname === '/systemadmin' ? "" : "min-h-screen bg-slate-50/50 dark:bg-slate-950 text-gray-900 dark:text-slate-100 transition-colors duration-200"}
         >
           {children}
         </motion.main>
