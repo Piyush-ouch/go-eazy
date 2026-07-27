@@ -280,6 +280,13 @@ export const Navbar = () => {
                           )}
                         </button>
                         <button
+                          onClick={() => { navigate('/market-intel'); setUserMenuOpen(false) }}
+                          className="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors font-bold text-amber-600"
+                        >
+                          <span>Market Intel 📊</span>
+                          <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px]">PRO</span>
+                        </button>
+                        <button
                           onClick={() => { navigate('/settings'); setUserMenuOpen(false) }}
                           className="w-full flex flex-col items-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-b border-gray-100"
                         >

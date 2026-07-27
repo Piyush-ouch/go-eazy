@@ -35,6 +35,7 @@ const NotificationHistory     = lazy(() => import('./pages/NotificationHistory')
 const LeaseDetail             = lazy(() => import('./pages/LeaseDetail').then(m => ({ default: m.LeaseDetail })))
 const ComparePage             = lazy(() => import('./pages/ComparePage').then(m => ({ default: m.ComparePage })))
 const AuthHome                = lazy(() => import('./pages/AuthHome').then(m => ({ default: m.AuthHome })))
+const MarketIntelPage         = lazy(() => import('./pages/MarketIntelPage').then(m => ({ default: m.MarketIntelPage })))
 
 const PageSpinner = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
@@ -95,6 +96,7 @@ export function App() {
               {/* Nearby Services Routes */}
               <Route path="/nearby" element={<NearbyServices />} />
               <Route path="/compare" element={<ComparePage />} />
+              <Route path="/market-intel" element={<MarketIntelPage />} />
 
               {/* Service Provider Routes */}
               <Route path="/provider" element={
