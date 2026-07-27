@@ -24,6 +24,13 @@ import toast from 'react-hot-toast'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '../components/ui/Skeleton'
 import { LocationViewer } from '../components/map/LocationViewer'
+import { VirtualTourViewer } from '../components/property/VirtualTourViewer'
+import { ARRoomPreviewModal } from '../components/property/ARRoomPreviewModal'
+import { PropertyTimeLapse } from '../components/property/PropertyTimeLapse'
+import { StudentTestimonialsVideo } from '../components/property/StudentTestimonialsVideo'
+import { LandlordWalkthroughModal } from '../components/property/LandlordWalkthroughModal'
+import { VirtualOpenHouse } from '../components/property/VirtualOpenHouse'
+import { Box, Compass, Video } from 'lucide-react'
 
 const StarRating = ({ value, onChange, readonly = false }) => (
   <div className="flex gap-1">
@@ -77,6 +84,9 @@ export const PropertyDetail = () => {
   const [unlocking, setUnlocking] = useState(false)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [initialSlideIndex, setInitialSlideIndex] = useState(0)
+  
+  const [isArModalOpen, setIsArModalOpen] = useState(false)
+  const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false)
   
   // State for gallery navigation elements
   const [galleryPrevEl, setGalleryPrevEl] = useState(null)
@@ -442,6 +452,44 @@ export const PropertyDetail = () => {
               <p className="text-gray-500 text-sm">
                 {(hasUnlocked || p.landlord_id === user?.id) ? (gatedData?.exact_location || `${p.area}, ${p.city}`) : `${p.area}, ${p.city} • ${p.pincode}`}
               </p>
+
+              {/* Virtual Experience Toolbar */}
+              <div className="mt-5 pt-4 border-t border-gray-100 dark:border-slate-800 flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => {
+                    const el = document.getElementById('virtual-tour-section')
+                    el?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  <Compass size={14} className="text-red-400" />
+                  <span>360° Tour</span>
+                </button>
+
+                <button
+                  onClick={() => setIsArModalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm hover:opacity-95 transition-opacity cursor-pointer"
+                >
+                  <Box size={14} />
+                  <span>AR Room Try-On</span>
+                </button>
+
+                <button
+                  onClick={() => setIsWalkthroughOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm hover:bg-emerald-700 transition-colors cursor-pointer"
+                >
+                  <Video size={14} />
+                  <span>Live Landlord Walkthrough</span>
+                </button>
+              </div>
+            </div>
+
+            {/* VIRTUAL TOUR & AR HUB SECTION */}
+            <div id="virtual-tour-section" className="space-y-6">
+              <VirtualTourViewer propertyTitle={p.title} />
+              <PropertyTimeLapse propertyTitle={p.title} />
+              <VirtualOpenHouse propertyTitle={p.title} />
+              <StudentTestimonialsVideo propertyTitle={p.title} />
             </div>
 
             {/* Amenities Card */}
@@ -778,6 +826,18 @@ export const PropertyDetail = () => {
           </div>
         </div>
       )}
+      {/* AR & Walkthrough Modals */}
+      <ARRoomPreviewModal 
+        isOpen={isArModalOpen} 
+        onClose={() => setIsArModalOpen(false)} 
+        propertyTitle={p.title} 
+      />
+      <LandlordWalkthroughModal 
+        isOpen={isWalkthroughOpen} 
+        onClose={() => setIsWalkthroughOpen(false)} 
+        propertyTitle={p.title} 
+        landlordName={p.profiles?.full_name || p.landlord?.name} 
+      />
     </div>
   )
 }
