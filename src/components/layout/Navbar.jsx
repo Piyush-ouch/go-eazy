@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Search, ChevronDown, User, LogOut, Home, Building, Tent, MapPin, Grid, PlusCircle, LayoutDashboard, Menu, X, MessageSquare, Bell, Sparkles, Layers, Sun, Moon } from 'lucide-react'
+import { Search, ChevronDown, User, LogOut, Home, Building, Tent, MapPin, Grid, PlusCircle, LayoutDashboard, Menu, X, MessageSquare, Bell, Sparkles, Layers, Sun, Moon, Gift } from 'lucide-react'
 import { useTheme } from '../../context/ThemeContext'
 import { openAuthModal } from '../../store/authSlice'
+import { ReferralHubModal } from '../referral/ReferralHubModal'
 import { toggleMobileMenu, closeMobileMenu } from '../../store/uiSlice'
 import { useAuth } from '../../hooks/useAuth'
 import { useProperties } from '../../hooks/useProperties'
@@ -31,6 +32,7 @@ export const Navbar = () => {
   const [cityMenuOpen, setCityMenuOpen] = useState(false)
   const [langMenuOpen, setLangMenuOpen] = useState(false)
   const [notifDrawerOpen, setNotifDrawerOpen] = useState(false)
+  const [referralHubOpen, setReferralHubOpen] = useState(false)
   const [selectedCity, setSelectedCity] = useState(filters.city || 'All Cities')
   const [searchQuery, setSearchQuery] = useState(filters.query || '')
   // Tracks if the user is actively typing in the Navbar's own search bar.
@@ -211,6 +213,16 @@ export const Navbar = () => {
                   </button>
                   <NotificationDrawer isOpen={notifDrawerOpen} onClose={() => setNotifDrawerOpen(false)} />
                 </div>
+
+                <button
+                  onClick={() => setReferralHubOpen(true)}
+                  className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-extrabold text-xs shadow-md hover:scale-105 transition-all cursor-pointer"
+                  title="Refer & Earn ₹500"
+                >
+                  <Gift size={14} />
+                  <span>Refer & Earn ₹500</span>
+                </button>
+                <ReferralHubModal isOpen={referralHubOpen} onClose={() => setReferralHubOpen(false)} userName={profile?.full_name || 'Student'} />
 
                 <div className="relative">
                   <button

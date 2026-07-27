@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Heart, Clock, User as UserIcon, ChevronLeft, Bell, Calendar, MapPin, FileText, Plus } from 'lucide-react'
+import { Heart, Clock, User as UserIcon, ChevronLeft, Bell, Calendar, MapPin, FileText, Plus, Gift, Sparkles } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useProperties } from '../hooks/useProperties'
 import { useLease } from '../hooks/useLease'
@@ -8,6 +8,7 @@ import { PropertyCard } from '../components/property/PropertyCard'
 import { LeaseCard } from '../components/lease/LeaseCard'
 import { LeaseBuilderModal } from '../components/lease/LeaseBuilderModal'
 import { SignatureModal } from '../components/lease/SignatureModal'
+import { ReferralHubModal } from '../components/referral/ReferralHubModal'
 import { supabase } from '../lib/supabase'
 import { MOCK_PROPERTIES } from '../utils/constants'
 import { Skeleton } from '../components/ui/Skeleton'
@@ -24,6 +25,7 @@ export const UserDashboard = () => {
   const [showNotifications, setShowNotifications] = useState(false)
   const [myVisits, setMyVisits] = useState([])
   const [loadingData, setLoadingData] = useState(true)
+  const [referralModalOpen, setReferralModalOpen] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -182,6 +184,29 @@ export const UserDashboard = () => {
                </div>
             )}
           </div>
+        </div>
+
+        {/* GoEazy Credits Wallet & Refer&Earn Card */}
+        <div className="mb-10 bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-wrap items-center justify-between gap-6">
+          <div className="space-y-2 z-10">
+            <span className="bg-black/20 text-white text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider backdrop-blur-sm border border-white/20 inline-flex items-center gap-1.5">
+              <Gift size={14} /> GoEazy Refer&Earn™ Wallet
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold font-display leading-tight">
+              Available Rent Credits: ₹1,500
+            </h2>
+            <p className="text-sm text-white/90 max-w-lg">
+              Refer student friends (₹500 each) or property owners (₹1,000 each). Credits auto-apply to your next month's rent!
+            </p>
+          </div>
+
+          <button
+            onClick={() => setReferralModalOpen(true)}
+            className="z-10 bg-white text-slate-950 hover:bg-slate-100 font-extrabold px-6 py-3.5 rounded-2xl shadow-lg transition-all active:scale-95 text-sm flex items-center gap-2 cursor-pointer"
+          >
+            <Sparkles size={18} className="text-amber-500" />
+            <span>Open Referral Hub & Code</span>
+          </button>
         </div>
 
         {/* Saved Properties */}
@@ -343,6 +368,12 @@ export const UserDashboard = () => {
         <SignatureModal />
 
       </div>
+
+      <ReferralHubModal
+        isOpen={referralModalOpen}
+        onClose={() => setReferralModalOpen(false)}
+        userName={profile?.full_name || 'Student'}
+      />
     </div>
   )
 }
