@@ -63,3 +63,12 @@ export const getSearchQueryLink = (queryText) => {
   const msg = `Hey GoEazy Bot! ${queryText}`
   return generateWhatsAppLink(OFFICIAL_WHATSAPP_BOT_NUMBER, msg)
 }
+
+/**
+ * Send Flatmate Rent & Utility Split Request via WhatsApp
+ */
+export const getFlatmateSplitReminderLink = (phone, flatmateName, propertyTitle, amount, roomType, upiId) => {
+  const upiLink = `upi://pay?pa=${upiId || 'landlord@upi'}&pn=GoEazyRent&am=${amount}&cu=INR`
+  const msg = `Hi ${flatmateName}! 👋 Here is your monthly rent & utility share for "${propertyTitle || 'Flat'}" (${roomType || 'Room'}):\n\n💰 *Total Share: ₹${amount?.toLocaleString('en-IN')}*\n\nPay via GPay / PhonePe / Paytm UPI:\n${upiLink}\n\nSent via GoEazy Split&Pay™`
+  return generateWhatsAppLink(phone, msg)
+}

@@ -31,7 +31,8 @@ import { StudentTestimonialsVideo } from '../components/property/StudentTestimon
 import { LandlordWalkthroughModal } from '../components/property/LandlordWalkthroughModal'
 import { VirtualOpenHouse } from '../components/property/VirtualOpenHouse'
 import { WhatsAppButton } from '../components/ui/WhatsAppButton'
-import { Box, Compass, Video } from 'lucide-react'
+import { SplitPayModal } from '../components/common/SplitPayModal'
+import { Box, Compass, Video, Calculator } from 'lucide-react'
 
 const StarRating = ({ value, onChange, readonly = false }) => (
   <div className="flex gap-1">
@@ -88,6 +89,7 @@ export const PropertyDetail = () => {
   
   const [isArModalOpen, setIsArModalOpen] = useState(false)
   const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false)
+  const [isSplitPayOpen, setIsSplitPayOpen] = useState(false)
   
   // State for gallery navigation elements
   const [galleryPrevEl, setGalleryPrevEl] = useState(null)
@@ -482,6 +484,14 @@ export const PropertyDetail = () => {
                   <Video size={14} />
                   <span>Live Landlord Walkthrough</span>
                 </button>
+
+                <button
+                  onClick={() => setIsSplitPayOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-extrabold text-xs flex items-center gap-1.5 shadow-sm hover:opacity-95 transition-opacity cursor-pointer"
+                >
+                  <Calculator size={14} />
+                  <span>Split Rent (Split&Pay™)</span>
+                </button>
               </div>
             </div>
 
@@ -836,7 +846,7 @@ export const PropertyDetail = () => {
           </div>
         </div>
       )}
-      {/* AR & Walkthrough Modals */}
+      {/* AR, Walkthrough & SplitPay Modals */}
       <ARRoomPreviewModal 
         isOpen={isArModalOpen} 
         onClose={() => setIsArModalOpen(false)} 
@@ -847,6 +857,12 @@ export const PropertyDetail = () => {
         onClose={() => setIsWalkthroughOpen(false)} 
         propertyTitle={p.title} 
         landlordName={p.profiles?.full_name || p.landlord?.name} 
+      />
+      <SplitPayModal
+        isOpen={isSplitPayOpen}
+        onClose={() => setIsSplitPayOpen(false)}
+        propertyTitle={p.title}
+        basePrice={p.price}
       />
     </div>
   )
