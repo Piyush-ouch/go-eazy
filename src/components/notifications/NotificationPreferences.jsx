@@ -95,6 +95,28 @@ export const NotificationPreferences = () => {
               />
             </div>
 
+            {/* WhatsApp Alerts */}
+            <div className={`p-4 rounded-xl border transition-all flex items-center justify-between ${channels.whatsapp !== false ? 'bg-emerald-50/50 border-emerald-500/30' : 'bg-gray-50/50 border-gray-200'}`}>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-[#25D366] text-white shadow-2xs flex items-center justify-center font-bold">
+                  <MessageSquare size={18} className="fill-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                    WhatsApp Assist™ Alerts
+                    <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full font-bold">Popular</span>
+                  </p>
+                  <p className="text-[11px] text-gray-500">Matching rooms, lease PDFs & rent due alerts</p>
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                checked={channels.whatsapp !== false}
+                onChange={() => handleChannelToggle('whatsapp')}
+                className="w-5 h-5 rounded text-[#25D366] focus:ring-[#25D366] accent-[#25D366] cursor-pointer"
+              />
+            </div>
+
             {/* SMS */}
             <div className={`p-4 rounded-xl border transition-all flex items-center justify-between ${channels.sms ? 'bg-[#fff5f5]/50 border-[#CA3433]/30' : 'bg-gray-50/50 border-gray-200'}`}>
               <div className="flex items-center gap-3">

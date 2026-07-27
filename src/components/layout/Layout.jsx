@@ -6,6 +6,7 @@ import { AuthModal } from '../auth/AuthModal'
 import { AuthGateModal } from '../auth/AuthGateModal'
 import { AIAssistantModal } from '../ai/AIAssistantModal'
 import { CompareBar } from '../compare/CompareBar'
+import { WhatsAppBotWidget } from '../common/WhatsAppBotWidget'
 import { Toaster } from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -42,6 +43,7 @@ export const Layout = ({ children }) => {
       <AuthModal />
       <AIAssistantModal />
       <CompareBar />
+      <WhatsAppBotWidget />
     </>
   )
 }

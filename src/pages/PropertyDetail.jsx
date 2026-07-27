@@ -30,6 +30,7 @@ import { PropertyTimeLapse } from '../components/property/PropertyTimeLapse'
 import { StudentTestimonialsVideo } from '../components/property/StudentTestimonialsVideo'
 import { LandlordWalkthroughModal } from '../components/property/LandlordWalkthroughModal'
 import { VirtualOpenHouse } from '../components/property/VirtualOpenHouse'
+import { WhatsAppButton } from '../components/ui/WhatsAppButton'
 import { Box, Compass, Video } from 'lucide-react'
 
 const StarRating = ({ value, onChange, readonly = false }) => (
@@ -628,6 +629,15 @@ export const PropertyDetail = () => {
                               : t('property.sections.callNow')}
                           </span>
                         </a>
+                        <WhatsAppButton
+                          phone={gatedData?.contact_phone}
+                          propertyTitle={p.title}
+                          price={p.price}
+                          city={p.city}
+                          area={p.area}
+                          label="Chat with Owner on WhatsApp"
+                          className="rounded-full py-3.5"
+                        />
                         <a href={`mailto:${gatedData?.contact_email || ''}`} className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold hover:bg-gray-50 transition-colors shadow-sm text-[15px]">
                           <Mail size={18} /> {t('property.sections.sendEmail')}
                         </a>
